@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>LAST LEGACY — Guild Test & Dashboard (Cyber-Futuristic)</title>
+<style>
+:root{
+  --bg-1:#020417;
+  --bg-2:#061022;
+  --accent:#00e0ff;
+  --accent-2:#7affc6;
+  --glow:rgba(0,224,255,0.12);
+  --panel:rgba(255,255,255,0.04);
+  --muted:rgba(255,255,255,0.6);
+  --danger:#ff5a5a;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;font-family:Inter, Poppins, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+  background: radial-gradient(ellipse at top left, rgba(0,12,30,0.6), transparent), linear-gradient(180deg,var(--bg-1),var(--bg-2));
+  color:#fff;min-height:100vh;-webkit-font-smoothing:antialiased;
+}
+
+/* Header */
+header{
+  position:fixed;top:0;left:0;right:0;display:flex;align-items:center;
+  justify-content:space-between;padding:14px 28px;gap:20px;
+  background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  backdrop-filter: blur(8px);
+  border-bottom:1px solid rgba(255,255,255,0.02);z-index:1400;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+}
+.left{display:flex;align-items:center;gap:18px;}
+.logo{
+  font-weight:900;font-size:20px;letter-spacing:2px;color:var(--accent);
+  text-transform:uppercase; text-shadow:0 0 18px rgba(0,224,255,0.08);
+}
+.search-container{position:relative;width:320px}
+.search-input{
+  width:100%;padding:10px 44px 10px 14px;border-radius:999px;border:1px solid rgba(255,255,255,0.03);
+  background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));color:#fff;outline:none;
+  transition:box-shadow .18s,border-color .18s, transform .12s;
+}
+.search-input::placeholder{color:var(--muted)}
+.search-input:focus{box-shadow:0 0 22px rgba(0,224,255,0.12);border-color:var(--accent);transform:translateY(-1px)}
+.search-button{
+  position:absolute;right:8px;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:999px;border:none;
+  background:linear-gradient(180deg,var(--accent),#00b6d9);color:#001;cursor:pointer;display:inline-grid;place-items:center;font-size:16px;
+  box-shadow:0 8px 30px rgba(0,224,255,0.09);
+}
+
+/* Admin controls top-right */
+.admin-controls{display:flex;gap:12px;align-items:center}
+.status-indicator{display:flex;gap:8px;align-items:center;font-weight:700;color:var(--muted)}
+.indicator-dot{width:14px;height:14px;border-radius:50%;background:#7a1f1f;box-shadow:0 0 8px rgba(122,31,31,0.25);transition:all .36s}
+.indicator-dot.active{background:var(--accent-2);box-shadow:0 0 18px rgba(122,255,198,0.14);transform:scale(1.08)}
+.admin-btn{background:linear-gradient(180deg,#ffd24d,#ffcc00);border:none;padding:8px 14px;border-radius:10px;font-weight:800;cursor:pointer;box-shadow:0 8px 30px rgba(255,204,0,0.08)}
+.admin-btn:hover{transform:translateY(-2px);}
+
+/* Page layout */
+.container{max-width:1200px;margin:110px auto 80px;padding:0 20px;display:flex;flex-direction:column;gap:28px}
+
+/* Guild + YouTube */
+.guild-panel{display:grid;grid-template-columns:1fr 440px;gap:20px;align-items:start}
+.guild-card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.00));border-radius:14px;padding:18px;box-shadow:0 10px 40px var(--glow);border:1px solid rgba(255,255,255,0.02)}
+.guild-header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+.guild-title{font-size:22px;font-weight:900;color:var(--accent);text-shadow:0 0 18px rgba(0,224,255,0.06)}
+.guild-badge{background:linear-gradient(135deg,#071021, rgba(255,255,255,0.02));padding:8px 12px;border-radius:10px;font-weight:700;color:#fff;font-size:13px;box-shadow:inset 0 -6px 16px rgba(0,0,0,0.4)}
+.yt-embed{border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,0.03);height:280px;background:#000;position:relative}
+.yt-actions{display:flex;gap:12px;margin-top:12px;align-items:center}
+.join-btn{background:linear-gradient(90deg,#ff7a00,#ffcc00);color:#111;border:none;padding:10px 14px;border-radius:12px;font-weight:800;cursor:pointer;box-shadow:0 12px 50px rgba(255,140,0,0.12)}
+.join-btn:hover{transform:translateY(-4px);transition:all .14s}
+.subs-btn{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px 12px;border-radius:10px;cursor:pointer;color:var(--muted)}
+
+/* Guild info and results */
+.guild-info{color:var(--muted);font-size:14px;line-height:1.5;margin-top:8px}
+.results-panel{background:rgba(0,0,0,0.25);border-radius:12px;padding:12px;border:1px solid rgba(255,255,255,0.02)}
+
+/* Player cards */
+.players-grid{display:flex;flex-direction:column;gap:14px}
+.player-card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.00));padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.02);box-shadow:0 10px 40px var(--glow)}
+.player-name{font-weight:800;font-size:16px;margin-bottom:8px}
+.status-bar{height:12px;border-radius:999px;overflow:hidden;background:rgba(255,255,255,0.02);margin-bottom:8px}
+.status-fill{height:100%;transition:width .22s}
+.hp{background:linear-gradient(90deg,#ff6b6b,#ff3b3b)}.mana{background:linear-gradient(90deg,#4db7ff,#2a98ff)}.energy{background:linear-gradient(90deg,#ffd86b,#ffd54d)}
+.sliders{margin-top:6px;display:flex;flex-direction:column;gap:6px}
+input[type=range]{width:100%;accent-color:var(--accent)}
+
+/* Modals */
+.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.65);z-index:1600}
+.modal-card{width:680px;max-width:96%;background:linear-gradient(180deg,#071123,#091422);border-radius:14px;padding:18px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 28px 120px rgba(0,0,0,0.7)}
+.modal-card h3{margin:0 0 8px;color:var(--accent)}
+.modal-grid{display:grid;gap:10px;grid-template-columns:1fr 1fr;margin-top:8px}
+.full-row{grid-column:1/-1}
+label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+input[type=text],textarea,select,input[type=number]{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:rgba(255,255,255,0.01);color:#fff;outline:none}
+textarea{min-height:96px;resize:vertical}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:12px}
+.btn{padding:10px 14px;border-radius:10px;border:none;cursor:pointer;font-weight:800}
+.btn-primary{background:linear-gradient(180deg,var(--accent),#00b0d1);color:#001;box-shadow:0 10px 30px rgba(0,224,255,0.06)}
+.btn-muted{background:#0d1220;color:var(--muted);border:1px solid rgba(255,255,255,0.02)}
+
+/* Admin Applications modal content */
+.app-list{display:flex;flex-direction:column;gap:10px;max-height:420px;overflow:auto;padding-right:6px}
+.app-card{padding:12px;border-radius:10px;background:linear-gradient(180deg, rgba(0,224,255,0.02), transparent);border:1px solid rgba(255,255,255,0.02);animation:fadeIn .28s ease}
+.app-meta{font-size:13px;color:var(--muted)}
+.app-why{margin-top:8px;color:#fff}
+
+/* small helpers */
+.counter-badge{display:inline-block;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.02);font-weight:800;color:var(--accent)}
+.export-btn{background:linear-gradient(180deg,var(--accent-2),#7fecc9);color:#012;border:none;padding:8px 12px;border-radius:10px;font-weight:800;cursor:pointer}
+
+/* animations */
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (max-width:980px){.guild-panel{grid-template-columns:1fr}.search-container{width:220px}header{padding:12px 16px}}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="left">
+    <div class="logo">LAST LEGACY</div>
+    <div class="search-container">
+      <input id="searchInput" class="search-input" placeholder="Search players..." oninput="searchPlayers()" />
+      <button class="search-button" onclick="searchPlayers()">🔍</button>
+    </div>
+  </div>
+
+  <div class="admin-controls">
+    <div class="status-indicator">
+      <div id="adminIndicator" class="indicator-dot"></div>
+      <div id="adminStatusText">Admin: OFF</div>
+    </div>
+    <button id="adminBtn" class="admin-btn" onclick="openLogin()">Admin Login</button>
+  </div>
+</header>
+
+<!-- PAGE -->
+<div class="container">
+  <!-- GUILD + YT -->
+  <section class="guild-panel">
+    <div class="guild-card">
+      <div class="guild-header">
+        <div>
+          <div class="guild-title">Guild Test & Recruitment</div>
+          <div style="font-size:13px;color:var(--muted);margin-top:6px;">Prove your skill and join the ranks. Admins review applicants in the admin panel.</div>
+        </div>
+        <div class="guild-badge">Now Recruiting</div>
+      </div>
+
+      <div style="display:flex;gap:12px;align-items:flex-start;margin-top:6px">
+        <div style="flex:1">
+          <div style="font-weight:800;color:var(--accent);margin-bottom:10px">About the Guild Test</div>
+          <div class="guild-info">Teamwork, role-suitability, and tactical play are evaluated. Click <strong>Join the Guild Test</strong> to apply.</div>
+
+          <div style="margin-top:12px">
+            <button class="join-btn" onclick="openSurvey()">🔥 Join the Guild Test</button>
+            <button class="subs-btn" onclick="openYT()">View Channel</button>
+            <span id="adminViewHolder"></span>
+          </div>
+
+          <div style="margin-top:14px">
+            <div style="font-weight:700;color:var(--accent);margin-bottom:8px">Submission Status</div>
+            <div id="resultsPanel" class="results-panel">
+              <div style="font-size:13px;color:var(--muted)">Submit the application — admins will review it.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- YouTube embed -->
+        <div style="width:440px">
+          <div class="guild-card" style="padding:12px">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+              <div style="font-weight:800;color:var(--accent)">Official Channel</div>
+              <div style="font-size:13px;color:var(--muted)">UCjADOl1_Qsn13CjGCqw2KMg</div>
+            </div>
+            <div class="yt-embed" id="ytEmbed"></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px">
+              <div style="font-size:14px;font-weight:800" id="channelName">Channel</div>
+              <div>
+                <button class="join-btn" onclick="openYT()">Open Channel</button>
+                <button class="subs-btn" onclick="subscribeNote()">Subscribe</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right column: events & quick poll -->
+    <div class="guild-card" style="display:flex;flex-direction:column;gap:12px;align-items:stretch">
+      <div style="font-weight:800;color:var(--accent)">Guild Events</div>
+      <div style="color:var(--muted);font-size:14px">Next Test: <strong>Saturday</strong><br/>Time: <strong>20:00 UTC</strong><br/>Rewards: <strong>Exclusive Title + Loot</strong></div>
+
+      <div style="margin-top:8px">
+        <div style="font-weight:700;margin-bottom:6px">Quick Poll</div>
+        <div style="color:var(--muted);font-size:14px;margin-bottom:8px">Preferred raid time?</div>
+        <div style="display:flex;gap:8px">
+          <button class="subs-btn" onclick="vote('18:00')">18:00</button>
+          <button class="subs-btn" onclick="vote('20:00')">20:00</button>
+          <button class="subs-btn" onclick="vote('22:00')">22:00</button>
+        </div>
+        <div style="margin-top:8px;color:var(--muted);font-size:13px">Votes: <span id="pollSummary">0</span></div>
+      </div>
+
+      <div style="margin-top:auto">
+        <div style="font-weight:700;color:var(--accent)">Community</div>
+        <div style="color:var(--muted);font-size:13px">Discord • Guides • Events</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Player cards -->
+  <section>
+    <div class="players-grid" id="players"></div>
+  </section>
+</div>
+
+<!-- Survey Modal (for applicants) -->
+<div id="surveyModal" class="modal" onclick="if(event.target===this) closeSurvey()">
+  <div class="modal-card" role="dialog" aria-modal="true">
+    <h3>Guild Test Application</h3>
+    <div style="color:var(--muted);font-size:13px;margin-bottom:10px">Fill the form to apply. Admins can review applications from their panel.</div>
+
+    <div class="modal-grid">
+      <div>
+        <label>Player Name</label>
+        <input id="appName" type="text" placeholder="Your in-game name" />
+      </div>
+
+      <div>
+        <label>Class</label>
+        <select id="appClass">
+          <option>Warrior</option><option>Mage</option><option>Archer</option>
+          <option>Rogue</option><option>Healer</option>
+        </select>
+      </div>
+
+      <div class="full-row">
+        <label>Experience (1 - 10)</label>
+        <input id="appExp" type="range" min="1" max="10" value="5" oninput="document.getElementById('expVal').textContent=this.value" />
+        <div style="color:var(--muted);margin-top:6px">Level: <span id="expVal">5</span></div>
+      </div>
+
+      <div class="full-row">
+        <label>Why do you want to join?</label>
+        <textarea id="appWhy" placeholder="Tell us why you'd be a good fit..."></textarea>
+      </div>
+
+      <div class="full-row">
+        <label>Comments (optional)</label>
+        <input id="appComments" type="text" placeholder="Anything else you'd like to add" />
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-muted" onclick="closeSurvey()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitApplication()">Submit Application</button>
+    </div>
+  </div>
+</div>
+
+<!-- Admin Login Modal -->
+<div id="loginModal" class="modal" onclick="if(event.target===this) closeLogin()">
+  <div class="modal-card" style="max-width:420px">
+    <h3>Admin Login</h3>
+    <div style="color:var(--muted);font-size:13px;margin-bottom:10px">Enter admin credentials to view applications.</div>
+    <div style="margin-top:6px">
+      <label>Username</label>
+      <input id="adminUser" type="text" placeholder="admin" />
+      <label style="margin-top:8px">Password</label>
+      <input id="adminPass" type="password" placeholder="••••••" />
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-muted" onclick="closeLogin()">Cancel</button>
+      <button class="btn btn-primary" onclick="login()">Login</button>
+    </div>
+  </div>
+</div>
+
+<!-- Admin Applications Modal -->
+<div id="appsModal" class="modal" onclick="if(event.target===this) closeApps()">
+  <div class="modal-card" style="max-width:820px">
+    <div style="display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <h3>Guild Applications</h3>
+        <div style="color:var(--muted);font-size:13px">Admin-only list of applicants</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:12px;color:var(--muted)">Total</div>
+        <div class="counter-badge" id="totalApplicants">0</div>
+      </div>
+    </div>
+
+    <div style="margin-top:12px; display:flex; gap:8px; justify-content:flex-end; align-items:center">
+      <button class="export-btn" id="exportBtn" title="Export applications to CSV">Export CSV</button>
+      <button class="btn btn-muted" onclick="closeApps()">Close</button>
+      <button class="btn btn-primary" onclick="clearAllApplications()">🗑️ Clear All Applications</button>
+    </div>
+
+    <div style="margin-top:12px" class="app-list" id="appList">
+      <div style="color:var(--muted)">No applications yet.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---------- Storage keys ---------- */
+const STORAGE_KEY_APPS = 'll_applications';
+const STORAGE_KEY_POLL = 'll_poll';
+
+/* ---------- YouTube embed (latest upload from uploads playlist) ---------- */
+(function insertYT(){
+  const channelId = "UCjADOl1_Qsn13CjGCqw2KMg";
+  const uploadsPlaylist = "UU" + channelId.slice(2);
+  const iframe = document.createElement('iframe');
+  iframe.width = "100%";
+  iframe.height = "100%";
+  iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+  iframe.allowFullscreen = true;
+  iframe.src = `https://www.youtube.com/embed?listType=playlist&list=${uploadsPlaylist}&autoplay=1&mute=1&rel=0&modestbranding=1`;
+  document.getElementById('ytEmbed').appendChild(iframe);
+  document.getElementById('channelName').textContent = 'LAST LEGACY Channel';
+})();
+
+/* ---------- Load/save helpers ---------- */
+function saveApplicationsToStorage(){
+  try { localStorage.setItem(STORAGE_KEY_APPS, JSON.stringify(applications)); } catch(e){ console.warn(e); }
+}
+function loadApplicationsFromStorage(){
+  try { const raw = localStorage.getItem(STORAGE_KEY_APPS); return raw ? JSON.parse(raw) : []; } catch(e){ return []; }
+}
+function savePollToStorage(){ try { localStorage.setItem(STORAGE_KEY_POLL, JSON.stringify(poll)); } catch(e){} }
+function loadPollFromStorage(){ try { const raw = localStorage.getItem(STORAGE_KEY_POLL); return raw ? JSON.parse(raw) : {'18:00':0,'20:00':0,'22:00':0}; } catch(e){ return {'18:00':0,'20:00':0,'22:00':0}; } }
+
+/* ---------- Survey & Applications ---------- */
+let applications = loadApplicationsFromStorage(); // load persisted at start
+const resultsPanel = document.getElementById('resultsPanel');
+const appList = document.getElementById('appList');
+const totalApplicants = document.getElementById('totalApplicants');
+
+function openSurvey(){ document.getElementById('surveyModal').style.display='flex'; }
+function closeSurvey(){ document.getElementById('surveyModal').style.display='none'; }
+
+function submitApplication(){
+  const name = document.getElementById('appName').value.trim();
+  const clas = document.getElementById('appClass').value;
+  const exp = document.getElementById('appExp').value;
+  const why = document.getElementById('appWhy').value.trim();
+  const comments = document.getElementById('appComments').value.trim();
+
+  if(!name || !why){
+    alert('Please enter your name and a short reason why you want to join.');
+    return;
+  }
+
+  const app = { name, clas, exp, why, comments, time: new Date().toLocaleString() };
+  applications.unshift(app); // newest first
+  saveApplicationsToStorage();
+
+  resultsPanel.innerHTML = `<div style="font-size:13px;color:var(--muted)"><strong>✅ Application submitted!</strong> Admins will review it.</div>`;
+
+  // toast
+  const t = document.createElement('div');
+  t.style = "position:fixed;right:20px;bottom:24px;padding:10px 14px;border-radius:10px;background:linear-gradient(90deg,#00e0ff,#00b6d9);color:#001;font-weight:800;box-shadow:0 8px 30px rgba(0,224,255,0.12);z-index:2000;";
+  t.textContent = 'Application Received! Good luck.';
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),3800);
+
+  // clear form
+  document.getElementById('appName').value='';
+  document.getElementById('appWhy').value='';
+  document.getElementById('appComments').value='';
+  document.getElementById('appExp').value=5;
+  document.getElementById('expVal').textContent='5';
+
+  if(isAdmin) renderAdminApplications();
+}
+
+/* ---------- Admin system ---------- */
+const ADMIN_USER = 'admin';
+const ADMIN_PASS = 'legacy123';
+let isAdmin = false;
+
+const adminIndicator = document.getElementById('adminIndicator');
+const adminStatusText = document.getElementById('adminStatusText');
+const adminBtn = document.getElementById('adminBtn');
+const adminViewHolder = document.getElementById('adminViewHolder');
+const exportBtn = document.getElementById('exportBtn');
+
+function openLogin(){ document.getElementById('loginModal').style.display='flex'; }
+function closeLogin(){ document.getElementById('loginModal').style.display='none'; }
+
+function login(){
+  const u = document.getElementById('adminUser').value;
+  const p = document.getElementById('adminPass').value;
+  if(u === ADMIN_USER && p === ADMIN_PASS){
+    enableAdmin();
+    closeLogin();
+    alert('✅ Admin mode activated.');
+  } else {
+    alert('❌ Invalid admin credentials.');
+  }
+}
+
+function enableAdmin(){
+  isAdmin = true;
+  document.querySelectorAll('input[type=range]').forEach(r => r.disabled = false);
+  document.querySelectorAll('.sliders').forEach(s => s.classList.remove('locked'));
+  adminIndicator.classList.add('active');
+  adminStatusText.textContent = 'Admin: ON';
+  adminBtn.textContent = 'Logout Admin';
+  adminBtn.style.background = 'linear-gradient(180deg,var(--danger),#ff3b3b)';
+  adminBtn.onclick = disableAdmin;
+
+  renderAdminViewButton();
+  renderAdminApplications();
+}
+
+function disableAdmin(){
+  isAdmin = false;
+  document.querySelectorAll('input[type=range]').forEach(r => r.disabled = true);
+  document.querySelectorAll('.sliders').forEach(s => s.classList.add('locked'));
+  adminIndicator.classList.remove('active');
+  adminStatusText.textContent = 'Admin: OFF';
+  adminBtn.textContent = 'Admin Login';
+  adminBtn.style.background = 'linear-gradient(180deg,#ffd24d,#ffcc00)';
+  adminBtn.onclick = openLogin;
+
+  adminViewHolder.innerHTML = '';
+  closeApps();
+}
+
+function renderAdminViewButton(){
+  adminViewHolder.innerHTML = '';
+  const btn = document.createElement('button');
+  btn.className = 'subs-btn';
+  btn.textContent = 'View Applications';
+  btn.style.marginLeft = '12px';
+  btn.onclick = () => { renderAdminApplications(); openApps(); };
+  adminViewHolder.appendChild(btn);
+}
+
+/* ---------- Admin Applications Modal ---------- */
+function openApps(){ document.getElementById('appsModal').style.display='flex'; }
+function closeApps(){ document.getElementById('appsModal').style.display='none'; }
+
+function renderAdminApplications(){
+  const list = document.getElementById('appList');
+  const totalEl = document.getElementById('totalApplicants');
+  totalEl.textContent = applications.length;
+
+  if(applications.length === 0){
+    list.innerHTML = '<div style="color:var(--muted)">No applications yet.</div>';
+    return;
+  }
+  list.innerHTML = applications.map(a => `
+    <div class="app-card">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="font-weight:800">${escapeHtml(a.name)} <span style="font-weight:600;color:var(--muted);font-size:13px">(${escapeHtml(a.clas)})</span></div>
+        <div style="font-size:12px;color:var(--muted)">${escapeHtml(a.time)}</div>
+      </div>
+      <div style="margin-top:6px;color:var(--muted);font-size:13px">Exp: ${escapeHtml(a.exp)} • ${escapeHtml(a.comments || '—')}</div>
+      <div class="app-why">${escapeHtml(a.why)}</div>
+    </div>
+  `).join('');
+}
+
+/* Clear all applications (admin only) */
+function clearAllApplications(){
+  if(!isAdmin){ alert('Admin only'); return; }
+  if(!confirm('Clear all applications? This cannot be undone.')) return;
+  applications = [];
+  saveApplicationsToStorage();
+  renderAdminApplications();
+  resultsPanel.innerHTML = '<div style="font-size:13px;color:var(--muted)">Applications cleared by Admin.</div>';
+  // small toast
+  showToast('Applications cleared.');
+}
+
+/* ---------- Export CSV (admin only) ---------- */
+function exportApplicationsCSV(){
+  if(!isAdmin){ alert('Admin only'); return; }
+  if(applications.length === 0){ alert('No applications to export.'); return; }
+
+  const header = ['Timestamp','Player Name','Class','Experience','Reason','Comments'];
+  const rows = applications.map(a => [a.time, a.name, a.clas, a.exp, a.why, a.comments]);
+
+  const csvParts = [header.join(','), ...rows.map(r => r.map(c => `"${String(c).replaceAll('"','""')}"`).join(','))];
+  const csv = csvParts.join('\r\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `last-legacy-applications-${(new Date()).toISOString().slice(0,19).replaceAll(':','-')}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  showToast('CSV exported.');
+}
+
+/* ---------- Attach export handler to button (delegated) ---------- */
+document.addEventListener('click', (e) => {
+  if(e.target && e.target.id === 'exportBtn') exportApplicationsCSV();
+});
+
+/* ---------- Players area (existing features) ---------- */
+const playerData = [
+  { name: 'Player 1', hp: 90, mana: 70, energy: 85 },
+  { name: 'Player 2', hp: 60, mana: 80, energy: 55 },
+  { name: 'Player 3', hp: 95, mana: 50, energy: 90 },
+  { name: 'Player 4', hp: 40, mana: 65, energy: 30 },
+  { name: 'Player 5', hp: 75, mana: 90, energy: 80 }
+];
+const playersContainer = document.getElementById('players');
+
+function createPlayerCard(p){
+  const el = document.createElement('div');
+  el.className = 'player-card';
+  el.innerHTML = `
+    <div class="player-name">${p.name}</div>
+    <div class="status-bar"><div class="status-fill hp" style="width:${p.hp}%;"></div></div>
+    <div class="status-bar"><div class="status-fill mana" style="width:${p.mana}%;"></div></div>
+    <div class="status-bar"><div class="status-fill energy" style="width:${p.energy}%;"></div></div>
+    <div class="sliders locked">
+      <label>HP: <input type="range" min="0" max="100" value="${p.hp}" oninput="updateBar(this,'hp')" disabled></label>
+      <label>Mana: <input type="range" min="0" max="100" value="${p.mana}" oninput="updateBar(this,'mana')" disabled></label>
+      <label>Energy: <input type="range" min="0" max="100" value="${p.energy}" oninput="updateBar(this,'energy')" disabled></label>
+    </div>
+  `;
+  playersContainer.appendChild(el);
+}
+playerData.forEach(createPlayerCard);
+function updateBar(slider,type){
+  const card = slider.closest('.player-card');
+  const bar = card.querySelector('.' + type);
+  bar.style.width = slider.value + '%';
+}
+function searchPlayers(){
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  document.querySelectorAll('.player-card').forEach(card=>{
+    const name = card.querySelector('.player-name').textContent.toLowerCase();
+    card.style.display = name.includes(q) ? '' : 'none';
+  });
+}
+
+/* ---------- Quick YT actions & persistent poll ---------- */
+function openYT(){ window.open('https://www.youtube.com/channel/UCjADOl1_Qsn13CjGCqw2KMg','_blank'); }
+function subscribeNote(){ alert('Click the channel page to Subscribe — the site opens the channel for you.'); openYT(); }
+
+let poll = loadPollFromStorage();
+function vote(time){
+  poll[time] = (poll[time]||0)+1;
+  savePollToStorage();
+  updatePollSummary();
+  showToast(`Vote recorded: ${time}`);
+}
+function updatePollSummary(){
+  const total = (poll['18:00']||0) + (poll['20:00']||0) + (poll['22:00']||0);
+  document.getElementById('pollSummary').textContent = `${total} (18:${poll['18:00']} • 20:${poll['20:00']} • 22:${poll['22:00']})`;
+}
+
+/* ---------- small helper & toast ---------- */
+function escapeHtml(s=''){ return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;'); }
+function showToast(msg, ms = 3000){
+  const t = document.createElement('div');
+  t.style = "position:fixed;left:20px;bottom:24px;padding:10px 14px;border-radius:10px;background:linear-gradient(90deg,var(--accent),#00b6d9);color:#001;font-weight:800;box-shadow:0 8px 30px rgba(0,224,255,0.12);z-index:2000;";
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(), ms);
+}
+
+/* ---------- Initialize: load persisted data, render admin view if needed ---------- */
+(function init(){
+  // render applications count for admin modal (even if admin not logged in yet)
+  updatePollSummary();
+  // ensure sliders locked
+  disableAllRanges();
+  // ensure admin control text properly set
+  disableAdmin();
+})();
+function disableAllRanges(){
+  document.querySelectorAll('input[type=range]').forEach(r => r.disabled = true);
+  document.querySelectorAll('.sliders').forEach(s => s.classList.add('locked'));
+}
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
